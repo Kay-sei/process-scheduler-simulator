@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Scheduler Simulator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <nav class="bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-2xl font-bold text-blue-400">OS Simulator</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="/" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="/scheduler" class="text-white hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Process Scheduler</a>
+                        <a href="/rag" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">RAG Simulator</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-extrabold text-blue-400">Process Scheduler Simulator</h2>
+                <p class="text-xl text-gray-300 mt-4">Experiment with different scheduling algorithms</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Control Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-6">Control Panel</h3>
+                        
+                        <!-- Algorithm Selection -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-300 mb-3">Scheduling Algorithm</h4>
+                            <select id="algorithm" class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <option value="fcfs">First Come First Serve (FCFS)</option>
+                                <option value="sjf">Shortest Job First (SJF)</option>
+                                <option value="priority">Priority Scheduling</option>
+                                <option value="rr">Round Robin</option>
+                            </select>
+                        </div>
+
+                        <!-- Add Process -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-gray-300 mb-3">Add Process</h4>
+                            <div class="space-y-3">
+                                <input type="text" id="processName" placeholder="Process Name" 
+                                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="number" id="burstTime" placeholder="Burst Time" 
+                                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="number" id="arrivalTime" placeholder="Arrival Time" 
+                                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <input type="number" id="priority" placeholder="Priority (if applicable)" 
+                                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <button onclick="addProcess()" 
+                                        class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    Add Process
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Time Quantum (for Round Robin) -->
+                        <div id="timeQuantumContainer" class="mb-6 hidden">
+                            <h4 class="text-lg font-semibold text-gray-300 mb-3">Time Quantum</h4>
+                            <input type="number" id="timeQuantum" placeholder="Time Quantum" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="space-y-3">
+                            <button onclick="startSimulation()" 
+                                    class="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition duration-300">
+                                Start Simulation
+                            </button>
+                            <button onclick="resetSimulation()" 
+                                    class="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition duration-300">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Display -->
+                <div class="lg:col-span-2">
+                    <!-- Process Queue -->
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">Process Queue</h3>
+                        <div id="processQueue" class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Process</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Arrival Time</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Burst Time</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Priority</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="processTableBody" class="divide-y divide-gray-700">
+                                    <!-- Process rows will be added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Gantt Chart -->
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">Gantt Chart</h3>
+                        <div class="overflow-x-auto">
+                            <div class="gantt-container">
+                                <div id="processLegend" class="process-legend mb-4">
+                                    <!-- Process color legend will be added here -->
+                                </div>
+                                <div id="ganttChart" class="gantt-timeline">
+                                    <!-- Process blocks will be added here -->
+                                </div>
+                                <div id="timeAxis" class="gantt-axis">
+                                    <!-- Time markers will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6 mt-6">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">Statistics</h3>
+                        <div id="statistics" class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-300">Average Waiting Time:</p>
+                                <p id="avgWaitingTime" class="text-2xl font-bold text-green-400">0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-300">Average Turnaround Time:</p>
+                                <p id="avgTurnaroundTime" class="text-2xl font-bold text-blue-400">0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/scheduler.js') }}"></script>
+</body>
+</html> 

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Allocation Graph Simulator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/dist/vis-network.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Add vis.js core library -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-data@7.1.4/peer/umd/vis-data.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/peer/umd/vis-network.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <nav class="bg-gray-800 shadow-lg mb-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-2xl font-bold text-blue-400">Resource Allocation Graph</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Control Panel -->
+            <div class="lg:col-span-1">
+                <div class="bg-gray-800 rounded-lg shadow-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-400 mb-6">Steps to Create Deadlock</h3>
+                    
+                    <!-- Step 1: Resources -->
+                    <div class="mb-8 border-l-4 border-green-500 pl-4">
+                        <h4 class="text-lg font-semibold text-green-400 mb-3">Step 1: Add Resources</h4>
+                        <div class="space-y-2">
+                            <input type="text" id="resourceId" placeholder="Resource ID (e.g., R1)" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <input type="number" id="instances" min="1" placeholder="Number of Instances" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <button onclick="addResource()" 
+                                    class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                                Add Resource
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Processes -->
+                    <div class="mb-8 border-l-4 border-blue-500 pl-4">
+                        <h4 class="text-lg font-semibold text-blue-400 mb-3">Step 2: Add Processes</h4>
+                        <div class="space-y-2">
+                            <input type="number" id="processId" min="1" placeholder="Process ID (e.g., 1)" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <button onclick="addProcess()" 
+                                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Add Process
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Edges -->
+                    <div class="mb-8 border-l-4 border-yellow-500 pl-4">
+                        <h4 class="text-lg font-semibold text-yellow-400 mb-3">Step 3: Add Edges</h4>
+                        <div class="space-y-2">
+                            <select id="edgeType" 
+                                    class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                                <option value="allocation">Allocation (Resource → Process)</option>
+                                <option value="request">Request (Process → Resource)</option>
+                            </select>
+                            <input type="number" id="edgeProcessId" min="1" placeholder="Process ID" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <input type="text" id="edgeResourceId" placeholder="Resource ID" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <input type="number" id="edgeInstances" min="1" placeholder="Instances" 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg">
+                            <button onclick="addEdge()" 
+                                    class="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">
+                                Add Edge
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Detection -->
+                    <div class="mb-8 border-l-4 border-red-500 pl-4">
+                        <h4 class="text-lg font-semibold text-red-400 mb-3">Step 4: Check Deadlock</h4>
+                        <button onclick="detectDeadlock()" 
+                                class="w-full bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700">
+                            Detect Deadlock
+                        </button>
+                    </div>
+
+                    <!-- Reset Button -->
+                    <button onclick="resetGraph()" 
+                            class="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700">
+                        Reset All
+                    </button>
+
+                    <!-- Instructions Panel -->
+                    <div class="mt-8 bg-gray-700 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-white mb-2">Example Deadlock Scenario:</h4>
+                        <ol class="list-decimal list-inside text-sm text-gray-300 space-y-2">
+                            <li>Add Resource R1 with 1 instance</li>
+                            <li>Add Resource R2 with 1 instance</li>
+                            <li>Add Process 1</li>
+                            <li>Add Process 2</li>
+                            <li>Add Allocation: R1 → P1 (1 instance)</li>
+                            <li>Add Request: P1 → R2 (1 instance)</li>
+                            <li>Add Allocation: R2 → P2 (1 instance)</li>
+                            <li>Add Request: P2 → R1 (1 instance)</li>
+                            <li>Click "Detect Deadlock"</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graph Visualization -->
+            <div class="lg:col-span-2">
+                <div class="bg-gray-800 rounded-lg shadow-xl p-6" style="min-height: 600px;">
+                    <div id="graph" class="w-full h-full"></div>
+                </div>
+                <!-- Deadlock Status -->
+                <div id="deadlockStatus" class="mt-4 p-4 rounded-lg hidden">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/rag.js') }}"></script>
+</body>
+</html> 

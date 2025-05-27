@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS Simulator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <nav class="bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-2xl font-bold text-blue-400">OS Simulator</h1>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="/" class="text-white hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="/scheduler" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Process Scheduler</a>
+                        <a href="/rag" class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">RAG Simulator</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="text-center">
+                <h2 class="text-4xl font-extrabold text-blue-400 mb-8">Welcome to OS Simulator</h2>
+                <p class="text-xl text-gray-300 mb-12">An interactive tool for learning operating system concepts</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6 transform transition duration-500 hover:scale-105">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">Process Scheduler</h3>
+                        <p class="text-gray-300 mb-6">Experiment with different scheduling algorithms including FCFS, SJF, Priority, and Round Robin.</p>
+                        <a href="/scheduler" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                            Try Scheduler
+                        </a>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-6 transform transition duration-500 hover:scale-105">
+                        <h3 class="text-2xl font-bold text-green-400 mb-4">Resource Allocation Graph</h3>
+                        <p class="text-gray-300 mb-6">Visualize and detect deadlocks using Resource Allocation Graph simulation.</p>
+                        <a href="/rag" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300">
+                            Try RAG Simulator
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-400">© 2024 OS Simulator. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 
