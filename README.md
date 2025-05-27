@@ -15,58 +15,61 @@ A web-based application that simulates process scheduling algorithms and deadloc
   - Deadlock detection
   - Interactive process and resource management
 
-## Technologies Used
+## Quick Setup Guide
 
-- Python
-- Flask
-- NetworkX
-- HTML/CSS (Tailwind CSS)
-- JavaScript
+### Prerequisites
+- Python 3.7 or higher
+- Git (optional - for cloning)
 
-## Setup and Installation
+### Method 1: Download ZIP
+1. Go to `https://github.com/Kay-sei/process-scheduler-simulator`
+2. Click the green "Code" button
+3. Select "Download ZIP"
+4. Extract the ZIP file to your desired location
 
-1. Clone the repository:
-   ```bash
-   git clone <your-repository-url>
-   cd <repository-name>
-   ```
+### Method 2: Clone with Git
+```bash
+git clone https://github.com/Kay-sei/process-scheduler-simulator
+cd process-scheduler-simulator
+```
 
-2. Create and activate virtual environment:
-   ```bash
-   python -m venv .venv
-   # On Windows:
-   .\.venv\Scripts\activate
-   # On Unix or MacOS:
-   source .venv/bin/activate
-   ```
+### Setting Up the Environment
+1. Create a virtual environment:
+```bash
+python -m venv .venv
+```
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Activate the virtual environment:
+- On Windows:
+```bash
+.\.venv\Scripts\activate
+```
+- On Mac/Linux:
+```bash
+source .venv/bin/activate
+```
 
-4. Run the application:
-   ```bash
-   python app.py
-   ```
+3. Install required packages:
+```bash
+pip install -r requirements.txt
+```
 
-5. Open your web browser and navigate to:
-   - http://localhost:5000 - Home page
-   - http://localhost:5000/scheduler - Process Scheduler
-   - http://localhost:5000/rag - Resource Allocation Graph
+### Running the Application
+1. Start the Flask server:
+```bash
+python app.py
+```
 
-## Usage
+2. Open your web browser and go to:
+- http://localhost:5000 - Home page
+- http://localhost:5000/scheduler - Process Scheduler
+- http://localhost:5000/rag - Resource Allocation Graph
 
-### Process Scheduler
-1. Select scheduling algorithm
-2. Add processes with burst time, arrival time, and priority (if applicable)
-3. Set time quantum for Round Robin
-4. Start simulation to view Gantt chart and statistics
-
-### RAG Simulator
-1. Add processes and resources
-2. Create allocations and requests
-3. Detect deadlocks using the graph visualization
+## Troubleshooting
+If you encounter any issues:
+1. Make sure Python is installed and in your PATH
+2. Ensure all requirements are installed correctly
+3. Check if the virtual environment is activated (you should see (.venv) in your terminal)
 
 ## License
 
